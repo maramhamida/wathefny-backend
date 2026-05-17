@@ -5,13 +5,14 @@ WORKDIR /var/www
 RUN apt-get update && apt-get install -y \
     unzip zip curl git libpng-dev libonig-dev libxml2-dev
 
-RUN docker-php-ext-install pdo pdo_mysql
-
-COPY . .
-
+# تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN composer install
+# نسخ المشروع أولاً
+COPY . /var/www
+
+# تأكد أن composer.json موجود ثم install
+RUN composer install --no-interaction --no-dev --prefer-dist
 
 EXPOSE 10000
 
